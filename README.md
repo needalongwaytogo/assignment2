@@ -1,4 +1,4 @@
-# Assignment2 -- Flood Emergency Planning
+# Assignment 2 -- Flood Emergency Planning
 ## Task 1
 This part was finished by Jianing, updated,completed, and pushed by Dilijahan.
 
