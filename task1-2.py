@@ -41,3 +41,29 @@ def get_elevation_value(eastings = user_e, northings = user_n):
 
 print("Your elevation is", get_elevation_value(), "m.")
 
+# draw a buffer with 5 km radius, user_loaction is the input user coordinates of easting and northing
+user_location = Point(user_e, user_n)
+user_buffer = user_location.buffer(5000)
+
+'''resource https://www.cnblogs.com/shoufengwei/p/6437934.html
+
+rasterio.mask document
+https://rasterio.readthedocs.io/en/latest/api/rasterio.mask.html#rasterio.mask.mask
+'''
+# clip the elevation data using 5 km buffer
+# import package to use rasterio.mask module to mask the dataset
+import rasterio.mask
+# input raster: elevation;       input vector: [user_buffer] list
+# out_transform: Affine(5.0, 0.0, 434615.0,
+#       0.0, -5.0, 90800.0)
+out_elevation, out_transform = rasterio.mask.mask(elevation, feature, crop = True, nodata = elevation.nodata)
+
+min_pixel = (0, 0)
+max_pixel = (out_elevation[0].shape[1], out_elevation[0].shape[0])
+
+# Affine matrix (6 parameters) * vector 
+min_x, max_y = out_transform * min_pixel
+max_x, min_y = out_transform * max_pixel
+
+print(out_elevation[0])
+print("box:",min_x, min_y, max_x, max_y)
