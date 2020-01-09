@@ -13,4 +13,4 @@ This part of program aims to identify the highest location within a 5 km radius 
 
 Currently, the program can correctly access to the elevation value according to user input location.
 
-The buffer part need to be further modified and completed.
+The coordinates of minimum bounding box of the 5 km buffer can be detected.
