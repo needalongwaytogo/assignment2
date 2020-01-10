@@ -67,10 +67,11 @@ max_x, min_y = out_transform * max_pixel
 # set out_elevation
 out_elevation_array = out_elevation[0]
 max_elevation = np.max(out_elevation_array)
+max_elevation_index = np.where(array np.max())
 
 # add (row,column) index to lists
 for i in range(len(max_elevation_index[0])):
     e = max_elevation_index[0][i]
     n = max_elevation_index[1][i]
-    #print([e,n])
+    print([e,n])
     
