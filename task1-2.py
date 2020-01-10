@@ -30,6 +30,13 @@ elevation_matrix = elevation.read(1)
 
 # define a function to get elevation value of user input location
 def get_elevation_value(eastings = user_e, northings = user_n):
+    """Get elevation value.
+
+    Keyword arguments:
+    easting -- user input easting value (= user_e)
+    northing -- the input easting value (= user_n)
+
+    """
     # calculate elevation array index (col_elevation, row_elevation)
     res_h = (470000-425000)/9000
     res_v = (100000-75000)/5000
@@ -45,25 +52,25 @@ print("Your elevation is", get_elevation_value(), "m.")
 user_location = Point(user_e, user_n)
 user_buffer = user_location.buffer(5000)
 
-'''resource https://www.cnblogs.com/shoufengwei/p/6437934.html
-
-rasterio.mask document
-https://rasterio.readthedocs.io/en/latest/api/rasterio.mask.html#rasterio.mask.mask
-'''
 # clip the elevation data using 5 km buffer
 # import package to use rasterio.mask module to mask the dataset
 import rasterio.mask
 # input raster: elevation;       input vector: [user_buffer] list
-# out_transform: Affine(5.0, 0.0, 434615.0,
-#       0.0, -5.0, 90800.0)
-out_elevation, out_transform = rasterio.mask.mask(elevation, feature, crop = True, nodata = elevation.nodata)
+out_elevation, out_transform = rasterio.mask.mask(elevation, feature, crop = True, nodata = np.nan)
 
 min_pixel = (0, 0)
 max_pixel = (out_elevation[0].shape[1], out_elevation[0].shape[0])
 
-# Affine matrix (6 parameters) * vector 
 min_x, max_y = out_transform * min_pixel
 max_x, min_y = out_transform * max_pixel
 
-print(out_elevation[0])
-print("box:",min_x, min_y, max_x, max_y)
+# set out_elevation
+out_elevation_array = out_elevation[0]
+max_elevation = np.max(out_elevation_array)
+
+# add (row,column) index to lists
+for i in range(len(max_elevation_index[0])):
+    e = max_elevation_index[0][i]
+    n = max_elevation_index[1][i]
+    #print([e,n])
+    
