@@ -11,6 +11,5 @@ This part was finished by Jianing, and going to be further improved by Dilijahan
 
 This part of program aims to identify the highest location within a 5 km radius from the user input coordiantes.
 
-Currently, the program can correctly access to the elevation value according to user input location.
+Currently, the program can correctly access to the elevation value according to user input location and output the coordinates of the highest points within 5 km buffer.
 
-The coordinates of minimum bounding box of the 5 km buffer can be detected.
