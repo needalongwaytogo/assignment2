@@ -58,7 +58,7 @@ class FloodEmergencyModel(object):
             corrds = node["coords"].copy()
             self.itn_rtree.insert(count, corrds, fid)
             count+=1
-        
+
         # for task 4, build networkx graph from itn data, we store link feature id in Graph for
         # computing
         self.itn_graph = networkx.Graph()
@@ -132,6 +132,15 @@ class FloodEmergencyModel(object):
         bbox = nodes[0].bbox
         return nodes[0].object, Point(bbox[0], bbox[1])
 
+    def shortest_route(self, s, e):
+        ''' Task4: Find the shortest route between point p1 and p2point within a specified radius,
+
+        return:
+
+            path    shortest route between node s and e, path is a list of node feature id'''
+        path = networkx.dijkstra_path(self.itn_graph, source=s, target=e, weight="weight")
+        return path
+
 
 
 class Runner(object):
@@ -139,17 +148,34 @@ class Runner(object):
         pass
         
     def mainloop(self):
-    x = int(input("Input your esating: "))
-    y = int(input("Input your northing: "))
+        x = int(input("Input your esating: "))
+        y = int(input("Input your northing: "))
                 
-    model = FloodEmergencyModel()
-    model.load()
+        model = FloodEmergencyModel()
+        model.load()
 
- 
+        p_user = Point(x, y)
+        print("User position {}".format(p_user))
 
-    # task 1
-    # task 2
-    # task 3
-    # task 4
-    # task 5
+        # task 1
+        if not model.inbound(p_user):
+            print("User not in Isle bound")
+            return None
+
+        # task 2
+        p_high = model.nearest_highpoint(p_user, 5000)
+        print("Nearest high point position {}".format(p_high))
+
+        # task 3
+                p_itn_user_fid, p_itn_user = model.nearest_itnnode(p_user)
+        print("ITN node nearest to user fid={}, position={}".format(p_itn_user_fid, p_itn_user))
+        p_itn_high_fid, p_itn_high = model.nearest_itnnode(p_high)
+        print("ITN node nearest to highpoint fid={}, position={}".format(p_itn_high_fid, p_itn_high))
+
+        # task 4
+        route = model.shortest_route(p_itn_user_fid, p_itn_high_fid)
+        print("Shortest route from {} to {}".format(p_itn_user_fid, p_itn_high_fid))
+        print(route)
+
+        # task 5
 
