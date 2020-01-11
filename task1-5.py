@@ -147,16 +147,32 @@ class FloodEmergencyModel(object):
         path = networkx.dijkstra_path(self.itn_graph, source=s, target=e, weight="weight")
         return path
 
-    def plot(pu_itn, ph_itn, shortest_route): 
-        
+    def plot(pu, ph, pu_itn, ph_itn, shortest_route):
+    ''' Task5: Find the highest point within a specified radius
+        pu                  User position
+        ph                  Highpoint position
+        pu_itn              ITN node nearest to user
+        ph_itn              ITN node nearest to highpoint
+        shortest_route      shortest_route between pu_itn and ph_itn
+    '''        
         bg = rasterio.open("../Material/background/raster-50k_2724246.tif")
         fig = pyplot.figure(dpi=600)
         ax = fig.add_subplot()
 
-        clip_image, clip_trans = clip_rectangle(bg, pu,200, 150)
+        # plot blackground which 20000 width and 15000 height
+        clip_image, clip_trans = clip_rectangle(bg, pu,20000, 15000)
         ax = rasterio.plot.show(clip_image, ax=ax, origin="upper", transform=clip_trans)
+        
+        # plot elevation  alpha may change
+        clip_image, clip_trans = clip_circle(self.elevation, pu, 5000)
+        ax = rasterio.plot.show(clip_image, ax=ax, transform=clip_trans, alpha=0.6)
 
-
+        cX, cY, cZ = self.color_source(clip_image, clip_trans)
+        psm = ax.pcolormesh(cX, cY, cZ, alpha=0.6, facecolor='none')
+        fig.colorbar(psm, ax=ax, fraction=0.046, pad=0.04)
+        
+        
+        
 class Runner(object):
     def __init__(self):
         pass
