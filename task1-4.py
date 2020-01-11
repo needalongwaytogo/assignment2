@@ -58,6 +58,20 @@ class FloodEmergencyModel(object):
             corrds = node["coords"].copy()
             self.itn_rtree.insert(count, corrds, fid)
             count+=1
+        
+        # for task 4, build networkx graph from itn data, we store link feature id in Graph for
+        # computing
+        self.itn_graph = networkx.Graph()
+        road_links = self.itndata['roadlinks']
+        for link in road_links:
+            s = road_links[link]['start']
+            e = road_links[link]['end']
+
+        # get start point elevation and end point elevation
+        s_ele = self.get_elevation(self.road_nodes[s]["coords"][0], self.road_nodes[s]["coords"][1])
+        e_ele = self.get_elevation(self.road_nodes[e]["coords"][0], self.road_nodes[e]["coords"][1])
+
+        length = road_links[link]['length']
 
 
 
