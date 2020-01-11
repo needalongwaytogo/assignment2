@@ -26,6 +26,12 @@ def clip_circle(bg, p, radius, nodata=numpy.nan):
 mshape = p.buffer(radius)
 return rasterio.mask.mask(bg, [mshape], crop=True, nodata=nodata)
 
+# define function to clip elevation
+def clip_rectangle(bg, p, dx, dy):
+    mshape = Polygon([(p.x - dx / 2, p.y + dy / 2), (p.x + dx / 2, p.y + dy /2), (p.x + dx / 2, p.y - dy / 2), (p.x - dx / 2, p.y - dy / 2)])
+    return rasterio.mask.mask(bg, [mshape], crop=True)
+
+
 # build a class
 class FloodEmergencyModel(object):
     def __init__(self):
