@@ -14,3 +14,5 @@ This part of program aims to identify the highest location within a 5 km radius 
 Currently, the program can correctly access to the elevation value according to user input location and output the coordinates of the highest points within 5 km buffer.
 
 Relevant sources and references were added.
+
+The program has been updated to object-oriented.
