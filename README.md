@@ -16,3 +16,14 @@ Currently, the program can correctly access to the elevation value according to 
 Relevant sources and references were added.
 
 The program has been updated to object-oriented.
+
+
+## Task 3
+
+This part aims to find nearest nodes of the user location and the highest point detected in task 2.
+
+
+## Task 4
+
+This task aims to find the shortest path to proceed from user location to the highest point by foot. 
+
