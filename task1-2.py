@@ -1,77 +1,92 @@
-user_e = int(input("Input your esating: "))
-user_n = int(input("Input your northing: "))
-            
-print (user_e)
-print (user_n)
-if user_n < 80000 or user_n > 95000 or user_e < 430000 or user_e > 4650000:
-    print("Outside the extent!")
-else:
-    print("Current location: ","easting: ",user_e," northing: ",user_n)
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 # import packages
+import codecs
+import json
+import numpy
+import networkx
 import rasterio
-import pyproj
-import numpy as np
-import geopandas as gpd
-import matplotlib.pyplot as plt
-import cartopy.crs as ccrs
-from shapely.geometry import LineString
-from shapely.geometry import Point
-from shapely.geometry import Polygon
-
-# read the elevation raster in 'Material⁩/background/raster-50k_2724246.tif'
-elevation = rasterio.open("Material/elevation/SZ.asc")
-from rasterio import plot
-#rasterio.plot.show(elevation)
-#print(elevation.width, elevation.height, elevation.dtypes)
-
-# read elevation array
-elevation_matrix = elevation.read(1)
-
-# define a function to get elevation value of user input location
-def get_elevation_value(eastings = user_e, northings = user_n):
-    """Get elevation value.
-
-    Keyword arguments:
-    easting -- user input easting value (= user_e)
-    northing -- the input easting value (= user_n)
-
-    """
-    # calculate elevation array index (col_elevation, row_elevation)
-    res_h = (470000-425000)/9000
-    res_v = (100000-75000)/5000
-    col_elevation = int((eastings - 425000)//res_h)
-    row_elevation = int((abs(northings - 100000))//res_v)
-    # access to the elevation value using elevation array index
-    elevation_value = elevation_matrix[row_elevation, col_elevation]
-    return (elevation_value)
-
-print("Your elevation is", get_elevation_value(), "m.")
-
-# draw a buffer with 5 km radius, user_loaction is the input user coordinates of easting and northing
-user_location = Point(user_e, user_n)
-user_buffer = user_location.buffer(5000)
-
-# clip the elevation data using 5 km buffer
-# import package to use rasterio.mask module to mask the dataset
 import rasterio.mask
-# input raster: elevation;       input vector: [user_buffer] list
-out_elevation, out_transform = rasterio.mask.mask(elevation, feature, crop = True, nodata = np.nan)
+import rasterio.plot
+from rtree import index
+from shapely.geometry import Point, Polygon
+from matplotlib_scalebar.scalebar import ScaleBar
+from matplotlib.colors import Normalize
+import matplotlib.pyplot as pyplot
 
-min_pixel = (0, 0)
-max_pixel = (out_elevation[0].shape[1], out_elevation[0].shape[0])
 
-min_x, max_y = out_transform * min_pixel
-max_x, min_y = out_transform * max_pixel
+# defien function to clip raster using buffer polygon
+def clip_circle(bg, p, radius, nodata=numpy.nan):
+'''Clip a circle region on the background bg
+    bg      the background
+    p       center point
+    radius  circle radius
+'''
+mshape = p.buffer(radius)
+return rasterio.mask.mask(bg, [mshape], crop=True, nodata=nodata)
 
-# set out_elevation
-out_elevation_array = out_elevation[0]
-max_elevation = np.max(out_elevation_array)
-max_elevation_index = np.where(array np.max())
-
-# add (row,column) index to lists
-for i in range(len(max_elevation_index[0])):
-    e = max_elevation_index[0][i]
-    n = max_elevation_index[1][i]
-    print([e,n])
+# build a class
+class FloodEmergencyModel(object):
+    def __init__(self):
+        pass
     
+    def bound_polygon(self, r):
+        return Polygon([(r.left, r.top), (r.right, r.top), (r.right, r.bottom), (r.left, r.bottom)])
+
+    def load(self):
+        # load elevation data
+        self.elevation = rasterio.open("Material/elevation/SZ.asc")
+        self.elevation_band = self.elevation.read(1)
+
+        # read elevation array
+        elevation_matrix = elevation.read(1)
+
+    # define a function to get elevation value of user input location
+    def get_elevation(self, x, y):
+        '''Get elevation in the point (x, y)'''
+        row, col =  self.elevation.index(x, y)
+        return self.elevation_band[row, col]
+        
+    
+    def inbound(self, p):
+        if user_n < 80000 or user_n > 95000 or user_e < 430000 or user_e > 4650000:
+            print("Outside the extent!")
+        else:
+            print("Current location: ","easting: ",user_e," northing: ",user_n)
+
+
+    out_elevation, out_transform = rasterio.mask.mask(elevation, feature, crop = True, nodata = np.nan)
+
+    min_pixel = (0, 0)
+    max_pixel = (out_elevation[0].shape[1], out_elevation[0].shape[0])
+
+
+    #print(out_elevation[0])
+    #print("box:",min_x, min_y, max_x, max_y)
+
+    # set out_elevation array to one dimension
+    out_elevation_array = out_elevation[0]
+
+    max_elevation = np.max(out_elevation_array)
+    max_elevation_index = np.where(out_elevation_array==np.max(out_elevation_array))
+
+class Runner(object):
+    def __init__(self):
+        pass
+        
+    def mainloop(self):
+    x = int(input("Input your esating: "))
+    y = int(input("Input your northing: "))
+                
+    model = FloodEmergencyModel()
+    model.load()
+
+ 
+
+    # task 1
+    # task 2
+    # task 3
+    # task 4
+    # task 5
+
