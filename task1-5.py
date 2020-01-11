@@ -147,6 +147,14 @@ class FloodEmergencyModel(object):
         path = networkx.dijkstra_path(self.itn_graph, source=s, target=e, weight="weight")
         return path
 
+    def plot(pu_itn, ph_itn, shortest_route): 
+        
+        bg = rasterio.open("../Material/background/raster-50k_2724246.tif")
+        fig = pyplot.figure(dpi=600)
+        ax = fig.add_subplot()
+
+        clip_image, clip_trans = clip_rectangle(bg, pu,200, 150)
+        ax = rasterio.plot.show(clip_image, ax=ax, origin="upper", transform=clip_trans)
 
 
 class Runner(object):
@@ -184,4 +192,6 @@ class Runner(object):
         print(route)
 
         # task 5
+        def plot(pu_itn, ph_itn, shortest_route):
+        plot = model.plot(p_user, p_high, p_itn_user, p_itn_high, route)
 
