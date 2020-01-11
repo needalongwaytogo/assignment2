@@ -76,20 +76,46 @@ class FloodEmergencyModel(object):
             print("Current location: ","easting: ",user_e," northing: ",user_n)
 
 
-    out_elevation, out_transform = rasterio.mask.mask(elevation, feature, crop = True, nodata = np.nan)
+    def nearest_highpoint(self, p, radius):
+        ''' Task 2: Find the highest point within a specified radius'''
+        clip_image, clip_transform = clip_circle(self.elevation, p, radius)
+        clip_band = clip_image[0]
 
-    min_pixel = (0, 0)
-    max_pixel = (out_elevation[0].shape[1], out_elevation[0].shape[0])
+        pcircle = p.buffer(radius)
+
+        hp = [0, 0]
+        # high point coords = clip_transform * hp
+        hp_elevation = self.get_elevation(*(clip_transform * hp))
+
+        rows, cols = clip_band.shape
+        for row in range(rows):
+            for col in range(cols):
+                x, y = clip_transform * [row, col]
+
+                if not pcircle.contains(Point(x, y)):
+                    continue
+
+                elevation = self.get_elevation(x, y);
+                if elevation > hp_elevation:
+                    hp = [row, col]
+                    hp_elevation = elevation
+
+        print(rows, cols, hp, hp_elevation)
+        return Point(*(clip_transform * hp))
+
+    def nearest_itnnode(self, p):
+        ''' Task3: Find the nearest itn node from the point p,
+
+        return:
+                node feature id,
+                node position point
+        '''
+        nodes = list(self.itn_rtree.nearest((p.x, p.y), num_results=1,
+            objects=True))
+        bbox = nodes[0].bbox
+        return nodes[0].object, Point(bbox[0], bbox[1])
 
 
-    #print(out_elevation[0])
-    #print("box:",min_x, min_y, max_x, max_y)
-
-    # set out_elevation array to one dimension
-    out_elevation_array = out_elevation[0]
-
-    max_elevation = np.max(out_elevation_array)
-    max_elevation_index = np.where(out_elevation_array==np.max(out_elevation_array))
 
 class Runner(object):
     def __init__(self):
