@@ -165,12 +165,20 @@ class FloodEmergencyModel(object):
         
         # plot elevation  alpha may change
         clip_image, clip_trans = clip_circle(self.elevation, pu, 5000)
-        ax = rasterio.plot.show(clip_image, ax=ax, transform=clip_trans, alpha=0.6)
+        ax = rasterio.plot.show(clip_image, ax=ax, transform=clip_trans, alpha=0.8)
 
         cX, cY, cZ = self.color_source(clip_image, clip_trans)
-        psm = ax.pcolormesh(cX, cY, cZ, alpha=0.6, facecolor='none')
+        psm = ax.pcolormesh(cX, cY, cZ, alpha=0.8, facecolor='none')
         fig.colorbar(psm, ax=ax, fraction=0.046, pad=0.04)
         
+        # four points
+        pX = [pu.x, ph.x, pu_itn.x, ph_itn.x]
+        pY = [pu.y, ph.y, pu_itn.y, ph_itn.y]
+        pColor = ["#C73B0B", "#f2317f", "#6b48ff", "#350608"]
+        pLabel = ["user", "highpoint", "user's nearest itn", "highpoint's nearest itn"]
+        
+        for i in range(4):
+            pyplot.scatter(pX[i], pY[i], color=pColor[i], label=pLabel[i])
         
         
 class Runner(object):
@@ -210,4 +218,5 @@ class Runner(object):
         # task 5
         def plot(pu_itn, ph_itn, shortest_route):
         plot = model.plot(p_user, p_high, p_itn_user, p_itn_high, route)
+        plot.savefig("spatial.png", format="png")
 
