@@ -27,3 +27,7 @@ This part aims to find nearest nodes of the user location and the highest point 
 
 This task aims to find the shortest path to proceed from user location to the highest point by foot. 
 
+
+## Task 5
+
+For the map plotting part, the start point and the highest point need to be marked. The shortest route for user needs to be presented, with the 5 km buffer and elevation range overlayed. The elevation color-bar, a north arrow, a scale bar, and a legend are also required to show on the map.
