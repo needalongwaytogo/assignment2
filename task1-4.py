@@ -73,6 +73,9 @@ class FloodEmergencyModel(object):
 
         length = road_links[link]['length']
 
+        # compute travel time according to Naismith's rule
+        time = length * 60 / 5000 + max(e_ele - s_ele, 0) / 10
+        self.itn_graph.add_edge(s, e, fid=link, weight=time)
 
 
 
