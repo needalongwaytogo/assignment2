@@ -119,10 +119,8 @@ class FloodEmergencyModel(object):
 
 
     def inbound(self, p):
-        if user_n < 80000 or user_n > 95000 or user_e < 430000 or user_e > 4650000:
-            print("Outside the extent!")
-        else:
-            print("Current location: ","easting: ",user_e," northing: ",user_n)
+        ''' Task 1: Find the highest point within a specified radius'''
+        return self.inner_polygon.contains(p) or self.inner_polygon.touches(p)
 
 
     def nearest_highpoint(self, p, radius):
