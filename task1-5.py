@@ -208,7 +208,13 @@ class FloodEmergencyModel(object):
             routeY.append(self.road_nodes[node]["coords"][1])
 
         pyplot.plot(routeX, routeY, color="red", label="shortest route")
-       
+        
+      # north arrow
+       x, y, arrow_length = 0.05, 0.95, 0.01
+       ax.annotate('N', xy=(x, y), xytext=(x, y-arrow_length - 0.1),
+                   arrowprops=dict(facecolor='black', width=5, headwidth=15),
+                   ha='center', va='center', fontsize=20,
+                   xycoords=ax.transAxes)        
         
 class Runner(object):
     def __init__(self):
