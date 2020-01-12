@@ -179,7 +179,16 @@ class FloodEmergencyModel(object):
         
         for i in range(4):
             pyplot.scatter(pX[i], pY[i], color=pColor[i], label=pLabel[i])
-        
+  
+        # shortest route
+        routeX = []
+        routeY = []
+        for node in shortest_route:
+            routeX.append(self.road_nodes[node]["coords"][0])
+            routeY.append(self.road_nodes[node]["coords"][1])
+
+        pyplot.plot(routeX, routeY, color="red", label="shortest route")
+       
         
 class Runner(object):
     def __init__(self):
