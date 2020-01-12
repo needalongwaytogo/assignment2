@@ -18,13 +18,13 @@ import matplotlib.pyplot as pyplot
 
 # defien function to clip raster using buffer polygon
 def clip_circle(bg, p, radius, nodata=numpy.nan):
-'''Clip a circle region on the background bg
-    bg      the background
-    p       center point
-    radius  circle radius
-'''
-mshape = p.buffer(radius)
-return rasterio.mask.mask(bg, [mshape], crop=True, nodata=nodata)
+    '''Clip a circle region on the background bg
+        bg      the background
+        p       center point
+        radius  circle radius
+    '''
+    mshape = p.buffer(radius)
+    return rasterio.mask.mask(bg, [mshape], crop=True, nodata=nodata)
 
 # define function to clip elevation
 def clip_rectangle(bg, p, dx, dy):
@@ -168,13 +168,13 @@ class FloodEmergencyModel(object):
         return path
 
     def plot(pu, ph, pu_itn, ph_itn, shortest_route):
-    ''' Task5: Find the highest point within a specified radius
-        pu                  User position
-        ph                  Highpoint position
-        pu_itn              ITN node nearest to user
-        ph_itn              ITN node nearest to highpoint
-        shortest_route      shortest_route between pu_itn and ph_itn
-    '''        
+        ''' Task5: Find the highest point within a specified radius
+            pu                  User position
+            ph                  Highpoint position
+            pu_itn              ITN node nearest to user
+            ph_itn              ITN node nearest to highpoint
+            shortest_route      shortest_route between pu_itn and ph_itn
+        '''        
         bg = rasterio.open("../Material/background/raster-50k_2724246.tif")
         fig = pyplot.figure(dpi=600)
         ax = fig.add_subplot()
@@ -209,13 +209,26 @@ class FloodEmergencyModel(object):
 
         pyplot.plot(routeX, routeY, color="red", label="shortest route")
         
-      # north arrow
+       # north arrow
        x, y, arrow_length = 0.05, 0.95, 0.01
        ax.annotate('N', xy=(x, y), xytext=(x, y-arrow_length - 0.1),
                    arrowprops=dict(facecolor='black', width=5, headwidth=15),
                    ha='center', va='center', fontsize=20,
                    xycoords=ax.transAxes)        
         
+        # scacle bar
+        scalebar = ScaleBar(1, location='lower left')
+        pyplot.gca().add_artist(scalebar)
+
+        # plot legend
+        pyplot.legend(fontsize='xx-small')
+       
+        # add xy labels of easting and northing
+        pyplot.xlabel('Easting')
+        pyplot.ylabel('Northing')
+        
+        return pyplot
+              
 class Runner(object):
     def __init__(self):
         pass
