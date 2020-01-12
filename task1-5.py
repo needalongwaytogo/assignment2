@@ -90,7 +90,27 @@ class FloodEmergencyModel(object):
         '''Get elevation in the point (x, y)'''
         row, col =  self.elevation.index(x, y)
         return self.elevation_band[row, col]
-        
+
+    def color_source(self, image, transform):
+        X = []
+        Y = []
+        Z = []
+        band = image[0]
+        rows, cols = band.shape
+        for row in range(rows):
+            xc = []
+            yc = []
+            rc = []
+
+            for col in range(cols):
+                x, y = transform * [row, col]
+                xc.append(x)
+                yc.append(y)
+                rc.append(self.get_elevation(*(transform * [row, col])))
+            X.append(xc)
+            Y.append(yc)
+            Z.append(rc)
+        return X, Y, Z    
     
     def inbound(self, p):
         if user_n < 80000 or user_n > 95000 or user_e < 430000 or user_e > 4650000:
