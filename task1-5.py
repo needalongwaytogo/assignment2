@@ -16,18 +16,25 @@ from matplotlib.colors import Normalize
 import matplotlib.pyplot as pyplot
 
 
-# defien function to clip raster using buffer polygon
+# define function to clip raster using buffer polygon
 def clip_circle(bg, p, radius, nodata=numpy.nan):
     '''Clip a circle region on the background bg
         bg      the background
         p       center point
         radius  circle radius
     '''
-    mshape = p.buffer(radius)
-    return rasterio.mask.mask(bg, [mshape], crop=True, nodata=nodata)
+mshape = p.buffer(radius)
+return rasterio.mask.mask(bg, [mshape], crop=True, nodata=nodata)
+
 
 # define function to clip elevation
 def clip_rectangle(bg, p, dx, dy):
+    '''Clip a circle region on the background bg
+        bg      the background
+        p       center point
+        dx      rectangle width
+        dy      rectangle height
+    '''
     mshape = Polygon([(p.x - dx / 2, p.y + dy / 2), (p.x + dx / 2, p.y + dy /2), (p.x + dx / 2, p.y - dy / 2), (p.x - dx / 2, p.y - dy / 2)])
     return rasterio.mask.mask(bg, [mshape], crop=True)
 
@@ -83,14 +90,12 @@ class FloodEmergencyModel(object):
         time = length * 60 / 5000 + max(e_ele - s_ele, 0) / 10
         self.itn_graph.add_edge(s, e, fid=link, weight=time)
 
-
-
     # define a function to get elevation value of user input location
     def get_elevation(self, x, y):
         '''Get elevation in the point (x, y)'''
         row, col =  self.elevation.index(x, y)
         return self.elevation_band[row, col]
-
+        
     def color_source(self, image, transform):
         X = []
         Y = []
@@ -110,8 +115,9 @@ class FloodEmergencyModel(object):
             X.append(xc)
             Y.append(yc)
             Z.append(rc)
-        return X, Y, Z    
-    
+        return X, Y, Z
+
+
     def inbound(self, p):
         if user_n < 80000 or user_n > 95000 or user_e < 430000 or user_e > 4650000:
             print("Outside the extent!")
@@ -174,7 +180,7 @@ class FloodEmergencyModel(object):
             pu_itn              ITN node nearest to user
             ph_itn              ITN node nearest to highpoint
             shortest_route      shortest_route between pu_itn and ph_itn
-        '''        
+        '''
         bg = rasterio.open("../Material/background/raster-50k_2724246.tif")
         fig = pyplot.figure(dpi=600)
         ax = fig.add_subplot()
@@ -182,25 +188,26 @@ class FloodEmergencyModel(object):
         # plot blackground which 20000 width and 15000 height
         clip_image, clip_trans = clip_rectangle(bg, pu,20000, 15000)
         ax = rasterio.plot.show(clip_image, ax=ax, origin="upper", transform=clip_trans)
-        
-        # plot elevation  alpha may change
+
+        # plot elevation
         clip_image, clip_trans = clip_circle(self.elevation, pu, 5000)
         ax = rasterio.plot.show(clip_image, ax=ax, transform=clip_trans, alpha=0.8)
 
         cX, cY, cZ = self.color_source(clip_image, clip_trans)
         psm = ax.pcolormesh(cX, cY, cZ, alpha=0.8, facecolor='none')
         fig.colorbar(psm, ax=ax, fraction=0.046, pad=0.04)
-        
-        # four points
+
+        # four points give color and label respectively
         pX = [pu.x, ph.x, pu_itn.x, ph_itn.x]
         pY = [pu.y, ph.y, pu_itn.y, ph_itn.y]
         pColor = ["#C73B0B", "#f2317f", "#6b48ff", "#350608"]
         pLabel = ["user", "highpoint", "user's nearest itn", "highpoint's nearest itn"]
-        
+
         for i in range(4):
             pyplot.scatter(pX[i], pY[i], color=pColor[i], label=pLabel[i])
-  
+
         # shortest route
+        # first get position coords information on the route
         routeX = []
         routeY = []
         for node in shortest_route:
@@ -208,14 +215,13 @@ class FloodEmergencyModel(object):
             routeY.append(self.road_nodes[node]["coords"][1])
 
         pyplot.plot(routeX, routeY, color="red", label="shortest route")
-        
-       # north arrow
-       x, y, arrow_length = 0.05, 0.95, 0.01
-       ax.annotate('N', xy=(x, y), xytext=(x, y-arrow_length - 0.1),
-                   arrowprops=dict(facecolor='black', width=5, headwidth=15),
+
+        # north arrow
+        x, y, arrow_length = 0.05, 0.95, 0.01
+        ax.annotate('N', xy=(x, y), xytext=(x, y-arrow_length - 0.1),
                    ha='center', va='center', fontsize=20,
-                   xycoords=ax.transAxes)        
-        
+                   xycoords=ax.transAxes)
+
         # scacle bar
         scalebar = ScaleBar(1, location='lower left')
         pyplot.gca().add_artist(scalebar)
@@ -227,8 +233,11 @@ class FloodEmergencyModel(object):
         pyplot.xlabel('Easting')
         pyplot.ylabel('Northing')
         
+        # add map title
+        pyplot.title('Shortest route to nearest high point')
+
         return pyplot
-              
+
 class Runner(object):
     def __init__(self):
         pass
@@ -253,7 +262,7 @@ class Runner(object):
         print("Nearest high point position {}".format(p_high))
 
         # task 3
-                p_itn_user_fid, p_itn_user = model.nearest_itnnode(p_user)
+        p_itn_user_fid, p_itn_user = model.nearest_itnnode(p_user)
         print("ITN node nearest to user fid={}, position={}".format(p_itn_user_fid, p_itn_user))
         p_itn_high_fid, p_itn_high = model.nearest_itnnode(p_high)
         print("ITN node nearest to highpoint fid={}, position={}".format(p_itn_high_fid, p_itn_high))
@@ -264,7 +273,6 @@ class Runner(object):
         print(route)
 
         # task 5
-        def plot(pu_itn, ph_itn, shortest_route):
         plot = model.plot(p_user, p_high, p_itn_user, p_itn_high, route)
         plot.savefig("spatial.png", format="png")
 
