@@ -179,10 +179,10 @@ class FloodEmergencyModel(object):
 
         # plot elevation
         clip_image, clip_trans = clip_circle(self.elevation, pu, 5000)
-        ax = rasterio.plot.show(clip_image, ax=ax, transform=clip_trans, alpha=0.9)
+        ax = rasterio.plot.show(clip_image, ax=ax, cmap='terrain',transform=clip_trans, alpha=0.7)
 
         cX, cY, cZ = self.color_source(clip_image, clip_trans)
-        psm = ax.pcolormesh(cX, cY, cZ, alpha=0.9, facecolor='none')
+        psm = ax.pcolormesh(cX, cY, cZ, alpha=0.7,cmap='terrain', facecolor='none')
         fig.colorbar(psm, ax=ax, fraction=0.046, pad=0.04)
 
         # four points
@@ -259,3 +259,14 @@ class Runner(object):
         # task 5
         plot = model.plot(p_user, p_high, p_itn_user, p_itn_high, route)
         plot.savefig("spatial.png", format="png")
+
+if __name__ == '__main__':
+    runner = Runner()
+    runner.mainloop()
+
+
+
+
+
+
+
