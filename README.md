@@ -33,4 +33,4 @@ This task aims to find the shortest path to proceed from user location to the hi
 For the map plotting part, the start point and the highest point need to be marked. The shortest route for user needs to be presented, with the 5 km buffer and elevation range overlayed. The elevation color-bar, a north arrow, a scale bar, and a legend are also required to show on the map.
 
 
-coordinates tested (439619, 85800) (430000, 80000)(439619, 94990)
+coordinates tested (439619, 85800) (430000, 80000) (439619, 94990) (445000, 92000) (450000, 94000)
